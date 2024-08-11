@@ -1,6 +1,7 @@
 # Milestone 1
 ## Showcase
 <video src="./milestone1showcase.mp4" width='1920' height='auto' controls>
+<video src="https://youtu.be/k4e2gJOnNEc" controls></video>
 </video>
 
 ## Explanation
