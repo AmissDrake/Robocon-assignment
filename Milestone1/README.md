@@ -3,6 +3,7 @@
 <video src="./milestone1showcase.mp4" width='1920' height='auto' controls>
 <video src="https://youtu.be/k4e2gJOnNEc" controls></video>
 </video>
+https://youtu.be/k4e2gJOnNEc
 
 ## Explanation
 When you spin one wheel of the bot with a higher velocity than the other wheel, itll rotate in a circle. To achieve this effect, we use the following block of code:
