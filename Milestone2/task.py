@@ -30,23 +30,16 @@ def arucodet(img):
 
 def locandalign(bbox):
 	corner_coords=np.array(bbox)
-<<<<<<< HEAD
-	print(corner_coords)
+	# print(corner_coords)
 	if len(corner_coords) == 0:
 				print("No corners found")
 				return
-	coords = [(corner_coords[0][0][0][0]+ corner_coords[0][0][1][0] + corner_coords[0][0][2][0] + corner_coords[0][0][3][0])/4, 
-		   (corner_coords[0][0][0][1] + corner_coords[0][0][1][1] + corner_coords[0][0][2][1]+corner_coords[0][0][3][1])/4]
-	a,b,c,d = corner_coords[0][0][0], corner_coords[0][0][1], corner_coords[0][0][2], corner_coords[0][0][3]
-=======
-	# print(corner_coords)
 	#getting the coordinates of the center of the bot
 	coords = [(corner_coords[0][0][0][0]+ corner_coords[0][0][1][0] + corner_coords[0][0][2][0] + corner_coords[0][0][3][0])/4, 
 		   (corner_coords[0][0][0][1] + corner_coords[0][0][1][1] + corner_coords[0][0][2][1]+corner_coords[0][0][3][1])/4]
 	#getting the coordinates of the corners of the bots
 	a,b,c,d = corner_coords[0][0][0], corner_coords[0][0][1], corner_coords[0][0][2], corner_coords[0][0][3]
 	#getting the alignment of the bot
->>>>>>> 9eac113c55d6df894275272060fa0c018e56389f
 	angle = np.arctan2(d[1]-c[1], d[0]-c[0])
 	alignment = angle*180/np.pi
 	return coords,alignment
@@ -100,13 +93,6 @@ def simulator(sim):
 		#making it revolve according to radius level
 		sim.setJointTargetVelocity(r_joint, 10/radscaled) 
 		sim.setJointTargetVelocity(l_joint, -2.5)
-<<<<<<< HEAD
-		bbox = arucodet(img1)
-		coords, alignment = locandalign(bbox)
-		print(coords)
-		print(alignment)
-
-=======
 
 		#getting the location and alignment of the bot
 		bbox = arucodet(img1)
@@ -115,7 +101,6 @@ def simulator(sim):
 		# print(alignment)
 
 		#printing the image along with the text
->>>>>>> 9eac113c55d6df894275272060fa0c018e56389f
 		cv2.namedWindow('Image', cv2.WINDOW_KEEPRATIO)
 		cv2.putText(img1,f'Location: {coords}',[40,60],cv2.FONT_HERSHEY_SIMPLEX,1,[0,0,0],8)
 		cv2.putText(img1,f'Location: {coords}',[40,60],cv2.FONT_HERSHEY_SIMPLEX,1,[0,255,0],2)
