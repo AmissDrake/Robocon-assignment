@@ -6,10 +6,12 @@ https://youtu.be/PVvkhUi4fIc
 
 ## Frames of Reference
 <img src='./referenceframe.png' height = '512' width = 'auto' >
-### Location:
+<strong>Location:</strong>
 The top left of the vision sensor feed is the origin, x increasing as we go left to right and y increasing as we go top to bottom.
-### Alignment:
+<strong>Alignment:</strong>
 When the bot is aligned along a line parallel to the y-axis, its alignment is 0, which increases upto 360 as it rotates in the clockwise direction. For example, when the bot is aligned along +ve x-axis, its alignment is 90 degrees.
+
+
 ## Explanation
 First we get the vision sensor from coppeliasim and process the video feed from that to find the AruCo markers.
 
