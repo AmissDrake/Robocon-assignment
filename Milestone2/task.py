@@ -30,10 +30,13 @@ def arucodet(img):
 
 def locandalign(bbox):
 	corner_coords=np.array(bbox)
-	print(corner_coords)
+	# print(corner_coords)
+	#getting the coordinates of the center of the bot
 	coords = [(corner_coords[0][0][0][0]+ corner_coords[0][0][1][0] + corner_coords[0][0][2][0] + corner_coords[0][0][3][0])/4, 
 		   (corner_coords[0][0][0][1] + corner_coords[0][0][1][1] + corner_coords[0][0][2][1]+corner_coords[0][0][3][1])/4]
+	#getting the coordinates of the corners of the bots
 	a,b,c,d = corner_coords[0][0][0], corner_coords[0][0][1], corner_coords[0][0][2], corner_coords[0][0][3]
+	#getting the alignment of the bot
 	angle = np.arctan2(d[1]-c[1], d[0]-c[0])
 	alignment = angle*180/np.pi
 	return coords,alignment
@@ -78,6 +81,7 @@ def simulator(sim):
 
 	#Actual simulation part
 	while sim.getSimulationState() != sim.simulation_stopped:
+		#getting the image from the vision sensor and setting it up
 		img, res = sim.getVisionSensorImg(sensor1Handle)
 		img1 = np.frombuffer(img, dtype = np.uint8)
 		img1 = img1.reshape((1024, 1024, 3))
@@ -86,11 +90,14 @@ def simulator(sim):
 		#making it revolve according to radius level
 		sim.setJointTargetVelocity(r_joint, 10/radscaled) 
 		sim.setJointTargetVelocity(l_joint, -2.5)
+
+		#getting the location and alignment of the bot
 		bbox = arucodet(img1)
 		coords, alignment = locandalign(bbox)
-		print(coords)
-		print(alignment)
+		# print(coords)
+		# print(alignment)
 
+		#printing the image along with the text
 		cv2.namedWindow('Image', cv2.WINDOW_KEEPRATIO)
 		cv2.putText(img1,f'Location: {coords}',[40,60],cv2.FONT_HERSHEY_SIMPLEX,1,[0,0,0],8)
 		cv2.putText(img1,f'Location: {coords}',[40,60],cv2.FONT_HERSHEY_SIMPLEX,1,[0,255,0],2)
