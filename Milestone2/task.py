@@ -31,6 +31,9 @@ def arucodet(img):
 def locandalign(bbox):
 	corner_coords=np.array(bbox)
 	print(corner_coords)
+	if len(corner_coords) == 0:
+				print("No corners found")
+				return
 	coords = [(corner_coords[0][0][0][0]+ corner_coords[0][0][1][0] + corner_coords[0][0][2][0] + corner_coords[0][0][3][0])/4, 
 		   (corner_coords[0][0][0][1] + corner_coords[0][0][1][1] + corner_coords[0][0][2][1]+corner_coords[0][0][3][1])/4]
 	a,b,c,d = corner_coords[0][0][0], corner_coords[0][0][1], corner_coords[0][0][2], corner_coords[0][0][3]
