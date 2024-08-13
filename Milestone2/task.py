@@ -11,6 +11,7 @@ import  sys
 import traceback
 import time
 import cv2
+import cv2.aruco as aruco
 import numpy as np
 from coppeliasim_zmqremoteapi_client import RemoteAPIClient
 
@@ -19,8 +20,23 @@ from coppeliasim_zmqremoteapi_client import RemoteAPIClient
 
 
 ############################ USER DEFINED FUNCTIONS ##################################
+def arucodet(img):
+	gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+	arucoDict = aruco.getPredefinedDictionary(aruco.DICT_4X4_1000)
+	arucoParam = aruco.DetectorParameters()
+	detector = aruco.ArucoDetector(arucoDict, arucoParam)
+	bbox, ids, rejects = detector.detectMarkers(gray)
+	return bbox
 
-
+def locandalign(bbox):
+	corner_coords=np.array(bbox)
+	print(corner_coords)
+	coords = [(corner_coords[0][0][0][0]+ corner_coords[0][0][1][0] + corner_coords[0][0][2][0] + corner_coords[0][0][3][0])/4, 
+		   (corner_coords[0][0][0][1] + corner_coords[0][0][1][1] + corner_coords[0][0][2][1]+corner_coords[0][0][3][1])/4]
+	a,b,c,d = corner_coords[0][0][0], corner_coords[0][0][1], corner_coords[0][0][2], corner_coords[0][0][3]
+	angle = np.arctan2(d[1]-c[1], d[0]-c[0])
+	alignment = angle*180/np.pi
+	return coords,alignment
 
 ################################ MAIN FUNCTION #######################################
 
@@ -52,32 +68,38 @@ def simulator(sim):
 	r_joint = sim.getObject('/crn_bot/joint_r')
 	l_joint = sim.getObject('/crn_bot/joint_l')
 	sensor1Handle=sim.getObjectHandle('/vision_sensor')
+
+
+	#Taking radius from user (radius is not exact value, its proportional)
+	rad = int(input('enter radius level(1-10) :'))
+	radscaled = 1 + (rad-1)*0.2
+	time.sleep(2)
+
+
+	#Actual simulation part
 	while sim.getSimulationState() != sim.simulation_stopped:
 		img, res = sim.getVisionSensorImg(sensor1Handle)
-		# print(img)
 		img1 = np.frombuffer(img, dtype = np.uint8)
-		print(img1)
 		img1 = img1.reshape((1024, 1024, 3))
+		img1 = cv2.cvtColor(img1, cv2.COLOR_RGB2BGR)
+
+		#making it revolve according to radius level
+		sim.setJointTargetVelocity(r_joint, 10/radscaled) 
+		sim.setJointTargetVelocity(l_joint, -2.5)
+		bbox = arucodet(img1)
+		coords, alignment = locandalign(bbox)
+		print(coords)
+		print(alignment)
+
+		cv2.namedWindow('Image', cv2.WINDOW_KEEPRATIO)
+		cv2.putText(img1,f'Location: {coords}',[40,60],cv2.FONT_HERSHEY_SIMPLEX,1,[0,0,0],8)
+		cv2.putText(img1,f'Location: {coords}',[40,60],cv2.FONT_HERSHEY_SIMPLEX,1,[0,255,0],2)
+		cv2.putText(img1,f'Alignment: {round(alignment,2)}',[40,100],cv2.FONT_HERSHEY_SIMPLEX,1,[0,0,0],8)
+		cv2.putText(img1,f'Alignment: {round(alignment,2)}',[40,100],cv2.FONT_HERSHEY_SIMPLEX,1,[0,255,0],2)
 		cv2.imshow('Image', img1)
-
-	# #Taking radius from user (radius is not exact value, its proportional)
-	# rad = int(input('enter radius level(1-10) :'))
-	# radscaled = 1 + (rad-1)*0.2
-	# time.sleep(2)
-
-	# while sim.getSimulationState() != sim.simulation_stopped:
-	# 	#making it revolve according to radius level
-	
-	# 	sim.setJointTargetVelocity(r_joint, 10/radscaled) 
-	# 	sim.setJointTargetVelocity(l_joint, -2.5)
-	# 	image=sim.getVisionSensorImage(sensor1Handle)
-	# 	img = np.array(image)*255
-	# 	img = img.astype(np.uint8)
-	# 	img.resize([resolution[0],resolution[1],3])
-	# 	img = cv2.flip(img[...,::-1],0)
-	# 	cv2.imshow('image',img)
-	# 	if cv2.waitKey(1) & 0xFF == ord('q'): break
-
+		cv2.resizeWindow('Image', 768, 768)
+		
+		if cv2.waitKey(1) & 0xFF == ord('q'): break
 	cv2.destroyAllWindows()
 	return None
 	
